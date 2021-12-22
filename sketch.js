@@ -3,6 +3,7 @@ var fundoimg;
 var dftorre, torreimg;
 var torreangulo;
 var canhao;
+var baladoCanhao;
 
 
 const Engine = Matter.Engine;
@@ -32,8 +33,11 @@ function setup() {
 
   dftorre = Bodies.rectangle(160, 350, 160, 310, options);
   World.add(world,dftorre);
- torreangulo = 20;
+  angleMode(DEGREES);
+ torreangulo = 15;
  canhao = new Canhao(180,110,130,100,torreangulo);
+
+ baladoCanhao = new BaladoCanhao(canhao.x, canhao.y);
 }
 
 function draw() {
@@ -51,4 +55,10 @@ function draw() {
 
 
   canhao.display();
+  baladoCanhao.display();
+}
+function keyReleased(){
+if (keyCode ===DOWN_ARROW){
+baladoCanhao.Bala();
+}
 }
