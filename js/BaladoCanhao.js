@@ -6,6 +6,7 @@ class BaladoCanhao {
         this.r = 30;
         this.body = Bodies.circle(x,y,this.r,options);
         this.image = loadImage("./assets/cannonball.png");
+        this.rastro = [];
         World.add(world,this.body);
     }
 
@@ -15,7 +16,15 @@ class BaladoCanhao {
         imageMode(CENTER);
         image(this.image, pos.x, pos.y, this.r, this.r);
         pop();
+        if (this.body.velocity.x > 0 && pos.x >10){
+        var posicao = [pos.x,pos.y];
+        this.rastro.push(posicao);
+        }
+        for(var i = 0; i <this.rastro.length; i++){
+        image(this.image,this.rastro[i][0],this.rastro[i][1],5,5);
+        }
     }
+
     Bala(){
     var nvAngulo = canhao.angulo-28;
     nvAngulo = nvAngulo*(3.14/180);
