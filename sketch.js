@@ -4,6 +4,8 @@ var dftorre, torreimg;
 var torreangulo;
 var canhao;
 var balas = [];
+var navio;
+var navios = [];
 
 const Engine = Matter.Engine;
 const World = Matter.World;
@@ -55,6 +57,8 @@ function setup() {
  torreangulo = 15;
  canhao = new Canhao(180,110,130,100,torreangulo);
 
+ 
+
 }
 
 function draw() {
@@ -74,6 +78,10 @@ function draw() {
    balasMostrar(balas[bola],bola);
   }
   
+  
+
+ 
+mostrarPiratas();
 }
 function keyReleased(){
 if (keyCode ===DOWN_ARROW){
@@ -91,6 +99,26 @@ function balasMostrar(bala,i){
 if (bala){
   bala.display();
 }
+}
+function mostrarPiratas(){
+  if (navios.length > 0){
+    if (navios[navios.length-1].body.position.x<width-300 || navios[navios.length-1]  === undefined){
+    var posicoes = [-40,-60,70,20];
+    var posicao = random(posicoes);
+    var  navio = new Navio(width,height-60,170,170,posicao);
+  navios.push(navio);
+    
+    }
+   for(var i = 0; i < navios.length; i++){
+     if (navios[i]){
+      Matter.Body.setVelocity(navios[i].body, {x:-0.9, y:0});
+      navios.display();
+     }
+   }
+  }else{
+    var navio = new Navio(width,height-60,170,170,-60);
+  navios.push(navio);
+  }
 }
 
 
