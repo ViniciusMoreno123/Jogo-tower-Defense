@@ -33,4 +33,15 @@ class BaladoCanhao {
        Matter.Body.setStatic(this.body,false);
    Matter.Body.setVelocity(this.body,{x:velocidade.x*(180/3.14),y:velocidade.y*(180/3.14)});
     }
+    remover(index){
+     Matter.Body.setVelocity(this.body,{x:0,y:0})
+        setTimeout(()=>{
+            Matter.World.remove(world,this.body);
+            delete balas[index];
+            
+        }, 1000);
+        
+        
+       
+    }
 }

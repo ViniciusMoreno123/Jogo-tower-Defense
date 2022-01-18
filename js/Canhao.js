@@ -32,4 +32,15 @@ class Canhao {
         noFill();
 
     }
+    remover(index){
+
+    setTimeout(()=>{
+        Matter.World.remove(world,navios[index].body);
+        delete navios[index];
+        
+    }, 2000);
+    
+    
+   
+}
 }
