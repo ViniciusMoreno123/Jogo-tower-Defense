@@ -1,17 +1,3 @@
-const Engine = Matter.Engine;
-const World = Matter.World;
-const Bodies = Matter.Bodies;
-const Constraint = Matter.Constraint;
-
-var engine, world, ground;
-var fundoimg;
-var dftorre, torreimg;
-var torreangulo;
-var canhao;
-var navio;
-var balas = [];
-var navios = [];
-
 //Códigos de Revisão
 //Exemplo de matriz
 var matriz1 = [1,2,3,4,5];
@@ -33,9 +19,35 @@ matriz2.pop();
 matriz2.pop();
 //console.log(matriz2);
 
+const Engine = Matter.Engine;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Constraint = Matter.Constraint;
+
+var engine, world, ground;
+var fundoimg;
+var dftorre, torreimg;
+var torreangulo;
+var canhao;
+var navio;
+var balas = [];
+var navios = [];
+
+var navioAnimacao = [];
+var navioDados, navioImagem;
+var navioQ,navioqDados;
+var navioqAnimacao = [];
+var bolaAnim = [];
+var bolaDados,bolaImagem;
 function preload() {
   fundoimg = loadImage("./assets/background.gif");
   torreimg = loadImage("./assets/tower.png");
+  navioDados = loadJSON("./assets/boat/boat.json");
+  navioImagem = loadImage("./assets/boat/boat.png");
+  navioqDados = loadJSON ("./assets/boat/brokenBoat.json");
+  navioQ = loadImage("./assets/boat/brokenBoat.png");
+  bolaImagem = loadImage("./assets/waterSplash/waterSplash.png");
+  bolaDados = loadJSON ("./assets/waterSplash/waterSplash.json");
 }
 
 function setup() {
@@ -59,6 +71,25 @@ function setup() {
 
   canhao = new Canhao(180,110,130,100,torreangulo);
 
+  var navioFrames = navioDados.frames;
+  var navioqFrames = navioqDados.frames;
+  var bolaFrames = bolaDados.frames;
+
+  for (var i = 0; i < navioFrames.length; i++){
+    var pos = navioFrames[i].position;
+    var img = navioImagem.get(pos.x, pos.y, pos.w, pos.h);
+    navioAnimacao.push(img);
+  }
+for (var i = 0; i < navioqFrames.length; i++){
+    var pos = navioqFrames[i].position;
+    var img = navioQ.get(pos.x, pos.y, pos.w, pos.h);
+    navioqAnimacao.push(img);
+  }
+  for (var i = 0; i < bolaFrames.length; i++){
+    var pos = bolaFrames[i].position;
+    var img = bolaImagem.get(pos.x, pos.y, pos.w, pos.h);
+    bolaAnim.push(img);
+  }
 }
 
 function draw() {
@@ -83,11 +114,7 @@ function draw() {
   canhao.display();
 }
 
-function keyReleased(){
-if (keyCode ===DOWN_ARROW){
-balas[balas.length-1].Bala();
-}
-}
+
 
 function keyPressed(){
 if (keyCode === DOWN_ARROW){
@@ -100,6 +127,7 @@ if (keyCode === DOWN_ARROW){
 function balasMostrar(bala,i){
 if (bala){
   bala.display();
+  bala.animar();
   if (bala.body.position.x >= width || bala.body.position.y >= height-50){
     bala.remover(i);
   }
@@ -108,11 +136,11 @@ if (bala){
 
 function mostrarPiratas(){
   if (navios.length > 0){
-    if (navios[navios.length-1].body.position.x < width-300 ||
-        navios[navios.length-1] === undefined){
+    if (navios[navios.length-1] === undefined || 
+      navios[navios.length-1].body.position.x < width-300){
     var posicoes = [-40,-60,-70,-20];
     var posicao = random(posicoes);
-    var navio = new Navio(width,height-100,170,170,posicao);
+    var navio = new Navio(width,height-100,170,170,posicao, navioAnimacao);
   
     navios.push(navio);
     
@@ -122,13 +150,21 @@ function mostrarPiratas(){
      if (navios[i]){
       Matter.Body.setVelocity(navios[i].body, {x:-0.9, y:0});
       navios[i].display();
+      navios[i].animar();
      }
    }
   } else {
-    var navio = new Navio(width,height-60,170,170,-60);
-  navios.push(navio);
+    var navio = new Navio(width,height-60,170,170,-60, navioAnimacao);
+    navios.push(navio);
   }
 }
+
+function keyReleased(){
+  if (keyCode ===DOWN_ARROW){
+  balas[balas.length-1].Bala();
+  }
+  }
+
 function detectorcolissao(index){
  for(var i = 0; i < navios.length; i++){
    if (balas[index] !== undefined && navios[i] !== undefined ){

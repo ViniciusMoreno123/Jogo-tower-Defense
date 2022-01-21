@@ -23,24 +23,10 @@ class Canhao {
         imageMode(CENTER);
         image(this.cano,0,0,this.lar,this.alt);
         
-
-
-
         pop();
 
         image(this.base,70,20,200,200);
         noFill();
-
-    }
-    remover(index){
-
-    setTimeout(()=>{
-        Matter.World.remove(world,navios[index].body);
-        delete navios[index];
-        
-    }, 2000);
-    
-    
    
 }
 }
