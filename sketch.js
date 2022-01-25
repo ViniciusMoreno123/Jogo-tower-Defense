@@ -32,6 +32,7 @@ var canhao;
 var navio;
 var balas = [];
 var navios = [];
+var pontos = 0;
 
 var navioAnimacao = [];
 var navioDados, navioImagem;
@@ -39,6 +40,13 @@ var navioQ,navioqDados;
 var navioqAnimacao = [];
 var bolaAnim = [];
 var bolaDados,bolaImagem;
+
+var somMusica,somCanhao,somRisada,somAgua;
+
+
+var jogotriste = false;
+var estaRindo = false;
+
 function preload() {
   fundoimg = loadImage("./assets/background.gif");
   torreimg = loadImage("./assets/tower.png");
@@ -48,6 +56,10 @@ function preload() {
   navioQ = loadImage("./assets/boat/brokenBoat.png");
   bolaImagem = loadImage("./assets/waterSplash/waterSplash.png");
   bolaDados = loadJSON ("./assets/waterSplash/waterSplash.json");
+  somMusica = loadSound("./assets/background_music.mp3");
+  somCanhao = loadSound("./assets/cannon_explosion.mp3");
+  somRisada = loadSound("./assets/pirate_laugh.mp3");
+  somAgua = loadSound("./assets/cannon_water.mp3");
 }
 
 function setup() {
@@ -95,6 +107,16 @@ for (var i = 0; i < navioqFrames.length; i++){
 function draw() {
   background(189);
   image(fundoimg, 0, 0, 1200, 600);
+  fill("black");
+  textSize(40);
+  textAlign(CENTER,CENTER);
+  text("PONTUACÃO="+pontos,width-200,50)
+  if(!somMusica.isPlaying()){
+     somMusica.play();
+     somMusica.setVolume(0.1);
+ }
+  
+  
  
   Engine.update(engine);
   
@@ -130,6 +152,11 @@ if (bala){
   bala.animar();
   if (bala.body.position.x >= width || bala.body.position.y >= height-50){
     bala.remover(i);
+    if(bala.bolaTriste === true){
+      somAgua.playMode("untilDone");
+      somAgua.play();
+      somAgua.setVolume(0.1);
+    }
   }
 }
 }
@@ -147,10 +174,21 @@ function mostrarPiratas(){
     }
    
     for(var i = 0; i < navios.length; i++){
-     if (navios[i]){
+     if (navios[i]){ 
       Matter.Body.setVelocity(navios[i].body, {x:-0.9, y:0});
       navios[i].display();
       navios[i].animar();
+      var colisao = Matter.SAT.collides(dftorre, navios[i].body);
+      if(colisao.collided && !navios[i].estatriste){
+      if(!estaRindo && !somRisada.isPlaying()){
+        estaRindo = true;
+      somRisada.play();
+      somRisada.setVolume(0.1);
+
+      }
+        jogotriste = true;
+        fimDeJogo();
+      }
      }
    }
   } else {
@@ -161,6 +199,8 @@ function mostrarPiratas(){
 
 function keyReleased(){
   if (keyCode ===DOWN_ARROW){
+    somCanhao.play();
+    somCanhao.setVolume(0.1);
   balas[balas.length-1].Bala();
   }
   }
@@ -170,6 +210,7 @@ function detectorcolissao(index){
    if (balas[index] !== undefined && navios[i] !== undefined ){
     var colissao = Matter.SAT.collides(balas[index].body,navios[i].body);
     if (colissao.collided){
+      pontos += 5;
       navios[i].remover(i);
       Matter.World.remove(world,balas[index].body);
       delete balas[index];
@@ -178,7 +219,21 @@ function detectorcolissao(index){
  }
 }
 
-
+function fimDeJogo(){
+  swal({
+    title: "Perdeu Playboy",
+    text: "Valeu por jogar companheiro",
+    imageUrl: "https://raw.githubusercontent.com/whitehatjr/PiratesInvasion/main/assets/boat.png",
+    imageSize: "150x150",
+    confirmButtonText: "Jogar novamente"
+  },
+  function(estaConfirmado){
+    if(estaConfirmado){
+      location.reload();
+    }
+  }
+  );
+}
 
 
 
